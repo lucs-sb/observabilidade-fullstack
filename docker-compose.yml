@@ -1,0 +1,40 @@
+version: '3.8'
+
+networks:
+  drs_network:
+    driver: bridge
+
+services:
+  db:
+    image: postgres:latest
+    container_name: drs_db
+    networks:
+      - drs_network
+    environment:
+      POSTGRES_DB: donation_registration_system
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  api:
+    build:
+      context: .
+      dockerfile: Auth/Auth.API/Dockerfile
+    container_name: auth_api
+    depends_on:
+      - db
+    networks:
+      - drs_network
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Database: "Host=drs_db;Port=5432;Pooling=true;Database=donation_registration_system;Username=admin;Password=admin"
+      AuthSettings__SecretKey: "U7r4p$21xT!e8qLmZ9vFgH1rS6nK0wYc"
+      AuthSettings__ExpirationMinutes: "30"
+    ports:
+      - "8080:8080"
+
+volumes:
+  db-data:

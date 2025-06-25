@@ -1,0 +1,103 @@
+project.fragment.lock.json
+artifacts
+
+.vs
+.user
+.suo
+.userosscache
+.sln.docstates
+
+.idea
+.sln.iml
+
+.log
+.tmp
+
+.DS_Store
+Thumbs.db
+
+secrets.json
+appsettings.Development.json
+appsettings.Local.json
+appsettings..local.json
+
+.vspscc
+.vssscc
+
+.mdf
+.ldf
+
+wwwroot
+node_modules
+
+uploads
+fotos
+
+.dbmdl
+
+.localhistory
+
+# Build artifacts
+bin/
+obj/
+out/
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Rider
+.idea/
+*.sln.iml
+
+# ASP.NET Core runtime files
+**/wwwroot/lib/
+
+# NuGet packages
+*.nupkg
+# The packages folder can be ignored because of PackageReference
+packages/
+# Uncomment if you use Paket
+# .paket/
+# Paket dependency files
+# paket-files/
+
+# Dotnet tools
+.toolstarget/
+.tools/
+
+# VS Code
+.vscode/
+
+# User-specific files
+*.log
+*.history
+
+# Test results
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+# Azure Pipelines
+.azure-pipelines/
+
+# IIS Express
+/.vs/config/applicationhost.config
+
+# OS generated
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# JetBrains Rider
+_ReSharper*/
+*.[Rr]e[Ss]harper
+JetBrains*
+
+# Optional: if you include a frontend subfolder
+# node_modules/
+# build/
