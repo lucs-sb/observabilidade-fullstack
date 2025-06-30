@@ -4,7 +4,6 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER $APP_UID
 WORKDIR /app
-EXPOSE 8080
 EXPOSE 8081
 
 
@@ -12,16 +11,21 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Gateway.API.csproj", "."]
-RUN dotnet restore "./Gateway.API.csproj"
+COPY ["Gateway/Gateway.API/Gateway.API.sln", "Gateway/Gateway.API/"]
+COPY ["Gateway/Gateway.API/Gateway.API.csproj", "Gateway/Gateway.API/"]
+COPY ["Gateway/Gateway.Domain/Gateway.Domain.csproj", "Gateway/Gateway.Domain/"]
+COPY ["Gateway/Gateway.CrossCutting/Gateway.CrossCutting.csproj", "Gateway/Gateway.CrossCutting/"]
+COPY ["Gateway/Gateway.Application/Gateway.Application.csproj", "Gateway/Gateway.Application/"]
+COPY ["Gateway/Gateway.Infrastructure/Gateway.Infrastructure.csproj", "Gateway/Gateway.Infrastructure/"]
+RUN dotnet restore "Gateway/Gateway.API/Gateway.API.csproj"
 COPY . .
 WORKDIR "/src/."
-RUN dotnet build "./Gateway.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "Gateway/Gateway.API/Gateway.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # Esta fase é usada para publicar o projeto de serviço a ser copiado para a fase final
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Gateway.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Gateway/Gateway.API/Gateway.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # Esta fase é usada na produção ou quando executada no VS no modo normal (padrão quando não está usando a configuração de Depuração)
 FROM base AS final
