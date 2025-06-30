@@ -8,5 +8,7 @@ public class DonorResponse
     public DateTime DateOfBirth { get; set; }
     public string? Gender { get; set; }
     public string? BloodType { get; set; }
+    public string? RhFactor { get; set; }
+    public decimal? WeightKg { get; set; }
     public AddressResponse? Address { get; set; }
 }

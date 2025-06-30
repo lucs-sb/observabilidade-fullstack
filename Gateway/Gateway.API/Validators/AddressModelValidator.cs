@@ -17,7 +17,7 @@ public class AddressModelValidator : AbstractValidator<AddressModel>
         RuleFor(model => model.State)
             .NotEmpty().WithMessage(model => string.Format(ApiMessage.Gateway_RequireField_Warning, nameof(model.State)));
 
-        RuleFor(model => model.ZipCode)
+        RuleFor(model => model.ZipCode).Cascade(CascadeMode.Stop)
             .NotEmpty().WithMessage(model => string.Format(ApiMessage.Gateway_RequireField_Warning, nameof(model.ZipCode)))
             .Matches(@"^\d{5}-\d{3}$").WithMessage(ApiMessage.Gateway_Validation_Field_Fail);
     }

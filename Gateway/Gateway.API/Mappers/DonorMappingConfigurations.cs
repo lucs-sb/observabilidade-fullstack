@@ -20,6 +20,8 @@ public static class DonorMappingConfigurations
             .Map(dest => dest.DateOfBirth, src => src.DateOfBirth)
             .Map(dest => dest.Gender, src => src.Gender)
             .Map(dest => dest.BloodType, src => src.BloodType)
+            .Map(dest => dest.RhFactor, src => src.RhFactor)
+            .Map(dest => dest.WeightKg, src => src.WeightKg)
             .Map(dest => dest.Address, src => src.Address.Adapt<AddressDTO>());
 
         TypeAdapterConfig<AddressModel, AddressDTO>
@@ -37,6 +39,8 @@ public static class DonorMappingConfigurations
             .Map(dest => dest.DateOfBirth, src => src.DateOfBirth)
             .Map(dest => dest.Gender, src => src.Gender)
             .Map(dest => dest.BloodType, src => src.BloodType)
+            .Map(dest => dest.RhFactor, src => src.RhFactor)
+            .Map(dest => dest.WeightKg, src => src.WeightKg)
             .Map(dest => dest.Address, src => src.Address.Adapt<AddressDTO>());
 
         TypeAdapterConfig<AddressDTO, AddressRequest>
@@ -54,6 +58,8 @@ public static class DonorMappingConfigurations
             .Map(dest => dest.DateOfBirth, src => src.DateOfBirth)
             .Map(dest => dest.Gender, src => src.Gender)
             .Map(dest => dest.BloodType, src => src.BloodType)
+            .Map(dest => dest.RhFactor, src => src.RhFactor)
+            .Map(dest => dest.WeightKg, src => src.WeightKg)
             .Map(dest => dest.Address, src => src.Address.Adapt<AddressDTO>());
 
         TypeAdapterConfig<AddressResponse, AddressResponseDTO>

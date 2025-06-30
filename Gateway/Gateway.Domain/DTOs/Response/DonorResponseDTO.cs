@@ -7,6 +7,8 @@ public record DonorResponseDTO(
     DateTime DateOfBirth,
     string Gender,
     string BloodType,
+    string RhFactor,
+    decimal WeightKg,
     AddressResponseDTO Address)
 {
 }
