@@ -6,6 +6,7 @@ public static class MappingConfigurations
     {
         services.RegisterAuthMaps();
         services.RegisterDonorMaps();
+        services.RegisterDonationMaps();
 
         return services;
     }
