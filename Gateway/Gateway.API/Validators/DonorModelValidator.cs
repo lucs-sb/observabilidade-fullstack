@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using Gateway.API.Models.Donor;
 using Gateway.API.Resources;
-using Gateway.Domain.Enums;
 
 namespace Gateway.API.Validators;
 

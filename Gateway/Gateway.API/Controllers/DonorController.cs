@@ -31,7 +31,7 @@ public class DonorController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteDonorAsync([FromRoute] string id)
     {
-        if (string.IsNullOrEmpty(id) || !Guid.TryParse(id, out _))
+        if (!Guid.TryParse(id, out _))
             return BadRequest("Invalid donor ID.");
 
         await _donorService.DeleteDonorAsync(Guid.Parse(id));
@@ -48,7 +48,7 @@ public class DonorController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetDonorByIdAsync([FromRoute] string id)
     {
-        if (string.IsNullOrEmpty(id) || !Guid.TryParse(id, out _))
+        if (!Guid.TryParse(id, out _))
             return BadRequest("Invalid donor ID.");
 
         DonorResponseDTO donor = await _donorService.GetDonorByIdAsync(Guid.Parse(id));
@@ -58,7 +58,7 @@ public class DonorController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateDonorAsync([FromRoute] string id, [FromBody] DonorModel donorModel)
     {
-        if (string.IsNullOrEmpty(id) || !Guid.TryParse(id, out _))
+        if (!Guid.TryParse(id, out _))
             return BadRequest("Invalid donor ID.");
 
         DonorDTO donorDTO = donorModel.Adapt<DonorDTO>();

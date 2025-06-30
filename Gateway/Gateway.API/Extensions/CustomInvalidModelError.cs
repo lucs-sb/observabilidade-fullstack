@@ -17,7 +17,7 @@ public class CustomInvalidModelError
                 var errors = modelError.Value?.Errors.Select(e => e.ErrorMessage).ToList();
                 var unexpectedErrors = errors!.Where(e => e.Contains("is not valid") || e.Contains("is invalid")).ToList();
 
-                if (modelError.Key.StartsWith("$.") || unexpectedErrors.Count != 0 || errors.Contains(""))
+                if (modelError.Key.StartsWith("$.") || unexpectedErrors.Count != 0 || errors!.Contains(""))
                     errors = [ApiMessage.Gateway_Validation_Field_Fail];
 
                 jsonResult.Add(keyName, errors!);
