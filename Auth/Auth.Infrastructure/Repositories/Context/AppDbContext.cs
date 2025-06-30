@@ -1,7 +1,7 @@
 ﻿using Auth.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Auth.Infrastructure.Repositories;
+namespace Auth.Infrastructure.Repositories.Context;
 
 public class AppDbContext : DbContext
 {

@@ -1,4 +1,5 @@
 using Donor.API.Mappers;
+using Donor.API.Middleware;
 using Donor.CrossCutting.IoC;
 using Donor.Infrastructure.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
@@ -43,6 +44,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 

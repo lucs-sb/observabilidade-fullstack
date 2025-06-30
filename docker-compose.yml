@@ -28,8 +28,8 @@ services:
       - drs_network
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      IntegrationSettings__AuthUri: "https://localhost:8082/api/auth"
-      IntegrationSettings__DonorUri: "https://localhost:8083/api/donor"
+      IntegrationSettings__AuthUri: "https://auth_api:8082/api/auth"
+      IntegrationSettings__DonorUri: "https://donor_api:8083/api/donor"
       IntegrationSettings__DonationUri: "https://localhost:8084/api/donation"
     ports:
       - "8081:8081"
@@ -48,8 +48,19 @@ services:
       ConnectionStrings__Database: "Host=drs_db;Port=5432;Pooling=true;Database=donation_registration_system;Username=admin;Password=admin"
       AuthSettings__SecretKey: "U7r4p$21xT!e8qLmZ9vFgH1rS6nK0wYc"
       AuthSettings__ExpirationMinutes: "30"
-    ports:
-      - "8082:8082"
+
+  donor-api:
+    build:
+      context: .
+      dockerfile: Donor/Donor.API/Dockerfile
+    container_name: donor_api
+    depends_on:
+      - db
+    networks:
+      - drs_network
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Database: "Host=drs_db;Port=5432;Pooling=true;Database=donation_registration_system;Username=admin;Password=admin"
 
 volumes:
   db-data:

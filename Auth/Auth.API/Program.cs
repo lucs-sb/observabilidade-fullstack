@@ -1,7 +1,7 @@
 using Auth.API.Mappers;
 using Auth.API.Middleware;
 using Auth.CrossCutting.IoC;
-using Auth.Infrastructure.Repositories;
+using Auth.Infrastructure.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 

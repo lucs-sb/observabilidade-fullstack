@@ -1,4 +1,5 @@
 ﻿using Auth.Domain.Intefaces.Repositories;
+using Auth.Infrastructure.Repositories.Context;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Auth.Infrastructure.Repositories;
