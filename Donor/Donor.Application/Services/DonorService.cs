@@ -1,4 +1,5 @@
-﻿using Donor.Domain.DTOs;
+﻿using Donor.Application.Resources;
+using Donor.Domain.DTOs;
 using Donor.Domain.DTOs.Response;
 using Donor.Domain.Intefaces;
 using Donor.Domain.Intefaces.Repositories;
@@ -25,7 +26,7 @@ public class DonorService : IDonorService
             Domain.Entities.Donor? donor = await _unitOfWork.Repository<Domain.Entities.Donor>().GetByEmailAsync(donorDTO.Email);
 
             if (donor != null)
-                throw new InvalidOperationException("E-mail já existe");
+                throw new InvalidOperationException(BusinessMessage.Donor_DuplicateEmail_Warning);
 
             donor = donorDTO.Adapt<Domain.Entities.Donor>();
 
@@ -37,7 +38,7 @@ public class DonorService : IDonorService
         {
             await _unitOfWork.RollbackAsync();
 
-            throw new InvalidOperationException("E-mail já existe");
+            throw new InvalidOperationException(BusinessMessage.Donor_DuplicateEmail_Warning);
         }
         catch
         {
@@ -53,7 +54,7 @@ public class DonorService : IDonorService
 
         try
         {
-            Domain.Entities.Donor? donor = await _unitOfWork.Repository<Domain.Entities.Donor>().GetByIdAsync(id) ?? throw new InvalidOperationException("Doador não encontrado");
+            Domain.Entities.Donor? donor = await _unitOfWork.Repository<Domain.Entities.Donor>().GetByIdAsync(id) ?? throw new InvalidOperationException(BusinessMessage.Donor_NotFound_Warning);
 
             _unitOfWork.Repository<Domain.Entities.Donor>().Remove(donor);
 
@@ -76,7 +77,7 @@ public class DonorService : IDonorService
 
     public async Task<DonorResponseDTO> GetDonorByIdAsync(Guid id)
     {
-        Domain.Entities.Donor donor = await _unitOfWork.Repository<Domain.Entities.Donor>().GetByIdAsync(id) ?? throw new InvalidOperationException("Doador não encontrado");
+        Domain.Entities.Donor donor = await _unitOfWork.Repository<Domain.Entities.Donor>().GetByIdAsync(id) ?? throw new InvalidOperationException(BusinessMessage.Donor_NotFound_Warning);
 
         return donor.Adapt<DonorResponseDTO>();
     }
@@ -87,7 +88,7 @@ public class DonorService : IDonorService
 
         try
         {
-            Domain.Entities.Donor? donor = await _unitOfWork.Repository<Domain.Entities.Donor>().GetByIdAsync(id) ?? throw new InvalidOperationException("Doador não encontrado");
+            Domain.Entities.Donor? donor = await _unitOfWork.Repository<Domain.Entities.Donor>().GetByIdAsync(id) ?? throw new InvalidOperationException(BusinessMessage.Donor_NotFound_Warning);
 
             donor = donorDTO.Adapt<Domain.Entities.Donor>();
 
@@ -99,7 +100,7 @@ public class DonorService : IDonorService
         {
             await _unitOfWork.RollbackAsync();
 
-            throw new InvalidOperationException("E-mail já existe");
+            throw new InvalidOperationException(BusinessMessage.Donor_DuplicateEmail_Warning);
         }
         catch
         {
