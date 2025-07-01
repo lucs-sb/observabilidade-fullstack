@@ -1,8 +1,11 @@
 using Auth.API.Mappers;
 using Auth.API.Middleware;
 using Auth.CrossCutting.IoC;
+using Auth.Domain.Entities;
 using Auth.Infrastructure.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
+using System.Drawing;
+using System.Reflection;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,6 +40,17 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.EnsureCreated();
+
+    if (!db.User.Any(d => d.Identifier == "lucas"))
+    {
+        db.User.Add(new User
+        {
+            Id = Guid.NewGuid(),
+            Identifier = "lucas",
+            Password = "lucas"
+        });
+        db.SaveChanges();
+    }
 }
 
 // Configure the HTTP request pipeline.
