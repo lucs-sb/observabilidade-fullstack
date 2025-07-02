@@ -23,7 +23,7 @@ public static class AuthMappingConfigurations
 
         TypeAdapterConfig<LoginResponse, LoginResponseDTO>
             .NewConfig()
-            .Map(dest => dest.access_token, src => src.Token)
-            .Map(dest => dest.expiration, src => src.Expiration);
+            .Map(dest => dest.Token, src => src.Token)
+            .Map(dest => dest.Expiration, src => src.Expiration);
     }
 }
