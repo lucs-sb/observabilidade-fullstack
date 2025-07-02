@@ -3,12 +3,10 @@
 public class ExceptionHandlingMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly ILogger<ExceptionHandlingMiddleware> _logger;
 
-    public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
+    public ExceptionHandlingMiddleware(RequestDelegate next)
     {
         _next = next;
-        _logger = logger;
     }
 
     public async Task Invoke(HttpContext context)
@@ -19,17 +17,15 @@ public class ExceptionHandlingMiddleware
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unhandled exception");
-
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = ex is InvalidOperationException ? StatusCodes.Status400BadRequest : StatusCodes.Status500InternalServerError;
 
-            var result = System.Text.Json.JsonSerializer.Serialize(new
+            object errorResponse = new
             {
-                mensagem = ex is InvalidOperationException ? ex.Message : "Ocorreu um erro inesperado"
-            });
+                Message = ex is InvalidOperationException ? ex.Message : "Ocorreu um erro inesperado"
+            };
 
-            await context.Response.WriteAsync(result);
+            await context.Response.WriteAsJsonAsync(errorResponse);
         }
     }
 }

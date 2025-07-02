@@ -52,6 +52,7 @@ public static class DonorMappingConfigurations
 
         TypeAdapterConfig<DonorResponse, DonorResponseDTO>
             .NewConfig()
+            .Map(dest => dest.Id, src => src.Id)
             .Map(dest => dest.FullName, src => src.FullName)
             .Map(dest => dest.Email, src => src.Email)
             .Map(dest => dest.PhoneNumber, src => src.PhoneNumber)

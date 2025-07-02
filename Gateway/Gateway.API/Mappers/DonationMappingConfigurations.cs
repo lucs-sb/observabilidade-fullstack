@@ -29,6 +29,7 @@ public static class DonationMappingConfigurations
 
         TypeAdapterConfig<DonationResponse, DonationResponseDTO>
             .NewConfig()
+            .Map(dest => dest.Id, src => src.Id)
             .Map(dest => dest.DonorId, src => src.DonorId)
             .Map(dest => dest.DateOfDonation, src => src.DateOfDonation)
             .Map(dest => dest.DonationType, src => src.DonationType)

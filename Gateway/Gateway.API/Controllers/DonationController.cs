@@ -38,7 +38,7 @@ public class DonationController : ControllerBase
         return NoContent();
     }
 
-    [HttpGet("/donor/{id}")]
+    [HttpGet("donor/{id}")]
     public async Task<IActionResult> GetAllDonationsAsync([FromRoute] string donorId)
     {
         if (!Guid.TryParse(donorId, out _))
