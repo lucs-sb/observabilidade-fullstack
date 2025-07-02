@@ -24,12 +24,12 @@ public class ExceptionHandlingMiddleware
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = ex is UnauthorizedAccessException ? StatusCodes.Status401Unauthorized : StatusCodes.Status500InternalServerError;
 
-            var result = System.Text.Json.JsonSerializer.Serialize(new
+            object errorResponse = new
             {
-                mensagem = ex is UnauthorizedAccessException ? ex.Message : "Ocorreu um erro inesperado"
-            });
+                Message = ex is UnauthorizedAccessException ? ex.Message : "Ocorreu um erro inesperado"
+            };
 
-            await context.Response.WriteAsync(result);
+            await context.Response.WriteAsJsonAsync(errorResponse);
         }
     }
 }

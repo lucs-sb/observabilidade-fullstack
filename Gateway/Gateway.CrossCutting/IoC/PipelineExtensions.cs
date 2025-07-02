@@ -16,14 +16,14 @@ public static class PipelineExtensions
     {
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IDonorService, DonorService>();
+        services.AddScoped<IDonationService, DonationService>();
     }
 
     public static void AddAInfrastructureDI(this IServiceCollection services)
     {
         services.AddScoped<IAuthIntegrationService, AuthIntegrationService>();
         services.AddScoped<IDonorIntegrationService, DonorIntegrationService>();
-
-        services.AddScoped<IMicroApiClient, MicroApiClient>();
+        services.AddScoped<IDonationIntegrationService, DonationIntegrationService>();
     }
 
     public static void AddConfigurationDependencies(this IServiceCollection services, IConfiguration configuration)

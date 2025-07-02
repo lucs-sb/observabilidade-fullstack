@@ -16,14 +16,6 @@ public class MicroApiClient : IMicroApiClient
     public MicroApiClient(HttpClient httpClient)
     {
         _httpClient = httpClient;
-
-        ConfigureClient();
-    }
-
-    private void ConfigureClient()
-    {
-        _httpClient.DefaultRequestHeaders.Accept.Clear();
-        _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
     }
 
     public async Task<ApiResponse> DeleteHttpClientRequest(ApiDeleteRequest deleteRequest)

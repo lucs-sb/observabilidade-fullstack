@@ -47,7 +47,7 @@ using (var scope = app.Services.CreateScope())
         {
             Id = Guid.NewGuid(),
             Identifier = "lucas",
-            Password = "lucas"
+            Password = "AQAAAAIAAYagAAAAEOpeNiTeQJSbtTSL7MOlFOdo8isvYvJvqqYRM8flRzswiM1xp1+5HCwvhd46oawSiQ=="
         });
         db.SaveChanges();
     }

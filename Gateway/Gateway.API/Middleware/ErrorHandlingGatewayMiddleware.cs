@@ -34,7 +34,7 @@ public class ErrorHandlingGatewayMiddleware
            
             object errorResponse = new
             {
-                message = gatewayException.Message
+                gatewayException.Message
             };
 
             return context.Response.WriteAsJsonAsync(errorResponse);
@@ -43,7 +43,7 @@ public class ErrorHandlingGatewayMiddleware
         context.Response.StatusCode = 500;
         return context.Response.WriteAsJsonAsync(new
         {
-            message = "Ocorreu um erro no sistema, tente novamente mais tarde"
+            Message = "Ocorreu um erro no sistema, tente novamente mais tarde"
         });
     }
 }

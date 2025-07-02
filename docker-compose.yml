@@ -28,11 +28,13 @@ services:
       - drs_network
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      IntegrationSettings__AuthUri: "https://auth_api:8082/api/auth"
-      IntegrationSettings__DonorUri: "https://donor_api:8083/api/donor"
-      IntegrationSettings__DonationUri: "https://localhost:8084/api/donation"
+      IntegrationSettings__AuthUri: "http://auth_api:8080/api/auth"
+      IntegrationSettings__DonorUri: "http://donor_api:8080/api/donor"
+      IntegrationSettings__DonationUri: "http://localhost:8080/api/donation"
+      AuthSettings__SecretKey: "U7r4p$21xT!e8qLmZ9vFgH1rS6nK0wYc"
+      AuthSettings__ExpirationMinutes: "30"
     ports:
-      - "8081:8081"
+      - "8080:8080"
 
   auth-api:
     build:

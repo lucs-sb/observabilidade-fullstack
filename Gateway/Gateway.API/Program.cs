@@ -4,6 +4,8 @@ using Gateway.API.Extensions;
 using Gateway.API.Mappers;
 using Gateway.API.Middleware;
 using Gateway.CrossCutting.IoC;
+using Gateway.Domain.Interfaces.Http;
+using Gateway.Infrastructure.Integrations.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text.Json.Serialization;
@@ -19,6 +21,13 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.InvalidModelStateResponseFactory = context => new CustomInvalidModelError().CustomErrorResponse(context);
 });
+
+builder.Services
+  .AddHttpClient<IMicroApiClient, MicroApiClient>(client =>
+  {
+      client.DefaultRequestHeaders.Accept.Clear();
+      client.DefaultRequestHeaders.Add("Accept", "application/json");
+  });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

@@ -16,13 +16,6 @@ public class AuthService : IAuthService
 
     public async Task<LoginResponseDTO> LoginAsync(LoginDTO loginDTO)
     {
-        try
-        {
-            return await _authIntegrationService.LoginAsync(loginDTO);
-        }
-        catch (Exception)
-        {
-            throw;
-        }
+        return await _authIntegrationService.LoginAsync(loginDTO);
     }
 }
