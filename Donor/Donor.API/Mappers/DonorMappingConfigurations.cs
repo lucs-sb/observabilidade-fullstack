@@ -28,6 +28,21 @@ public static class DonorMappingConfigurations
             .Map(dest => dest.State, src => src.State)
             .Map(dest => dest.ZipCode, src => src.ZipCode);
 
+        TypeAdapterConfig<DonorDTO, Domain.Entities.Donor>
+            .NewConfig()
+            .Map(dest => dest.FullName, src => src.FullName)
+            .Map(dest => dest.Email, src => src.Email)
+            .Map(dest => dest.PhoneNumber, src => src.PhoneNumber)
+            .Map(dest => dest.DateOfBirth, src => src.DateOfBirth.ToUniversalTime())
+            .Map(dest => dest.Gender, src => src.Gender)
+            .Map(dest => dest.BloodType, src => src.BloodType)
+            .Map(dest => dest.RhFactor, src => src.RhFactor)
+            .Map(dest => dest.WeightKg, src => src.WeightKg)
+            .Map(dest => dest.Street, src => src.Address.Street)
+            .Map(dest => dest.City, src => src.Address.City)
+            .Map(dest => dest.State, src => src.Address.State)
+            .Map(dest => dest.ZipCode, src => src.Address.ZipCode);
+
         TypeAdapterConfig<Domain.Entities.Donor, DonorResponseDTO>
             .NewConfig()
             .Map(dest => dest.Id, src => src.Id)

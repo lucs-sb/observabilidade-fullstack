@@ -123,4 +123,7 @@
   <data name="Gateway.RequireField.Warning" xml:space="preserve">
     <value>O campo '{0}' é obrigatório</value>
   </data>
+  <data name="Gateway.InvalidId.Warning" xml:space="preserve">
+    <value>O Id é inválido</value>
+  </data>
 </root>

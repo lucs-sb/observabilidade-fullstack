@@ -7,7 +7,7 @@ public interface IDonorService
 {
     Task CreateDonorAsync(DonorDTO donorDTO);
     Task<DonorResponseDTO> GetDonorByIdAsync(Guid id);
-    Task<IEnumerable<List<DonorResponseDTO>>> GetAllDonorsAsync();
+    Task<List<DonorResponseDTO>> GetAllDonorsAsync();
     Task UpdateDonorAsync(Guid id, DonorDTO donorDTO);
     Task DeleteDonorAsync(Guid id);
 }

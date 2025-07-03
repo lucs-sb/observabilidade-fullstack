@@ -64,7 +64,7 @@ public class DonationIntegrationService : IDonationIntegrationService
         }
     }
 
-    public async Task<IEnumerable<List<DonationResponseDTO>>> GetAllDonationsAsync(Guid donorId)
+    public async Task<List<DonationResponseDTO>> GetAllDonationsAsync(Guid donorId)
     {
         ApiGetRequest apiGetRequest = new()
         {
@@ -82,7 +82,7 @@ public class DonationIntegrationService : IDonationIntegrationService
 
         List<DonationResponse> donationsResponse = apiResponse.Content.DeserializeObject<List<DonationResponse>>();
 
-        return (IEnumerable<List<DonationResponseDTO>>)donationsResponse.Adapt<List<DonationResponseDTO>>();
+        return donationsResponse.Adapt<List<DonationResponseDTO>>();
     }
 
     public async Task<DonationResponseDTO> GetDonationByIdAsync(Guid id)

@@ -40,6 +40,19 @@ public class ErrorHandlingGatewayMiddleware
             return context.Response.WriteAsJsonAsync(errorResponse);
         }
 
+        if (exception is InvalidOperationException invalidOperationException)
+        {
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+
+            object errorResponse = new
+            {
+                message = invalidOperationException.Message
+            };
+
+            return context.Response.WriteAsJsonAsync(errorResponse);
+        }
+
         context.Response.StatusCode = 500;
         return context.Response.WriteAsJsonAsync(new
         {

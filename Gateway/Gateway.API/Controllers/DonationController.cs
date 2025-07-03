@@ -1,4 +1,5 @@
 ﻿using Gateway.API.Models.Donation;
+using Gateway.API.Resources;
 using Gateway.Domain.DTOs;
 using Gateway.Domain.DTOs.Response;
 using Gateway.Domain.Interfaces;
@@ -32,7 +33,7 @@ public class DonationController : ControllerBase
     public async Task<IActionResult> DeleteDonationAsync([FromRoute] string id)
     {
         if (!Guid.TryParse(id, out _))
-            return BadRequest("Invalid Donation ID.");
+            throw new InvalidOperationException(ApiMessage.Gateway_InvalidId_Warning);
 
         await _donationService.DeleteDonationAsync(Guid.Parse(id));
         return NoContent();
@@ -42,9 +43,9 @@ public class DonationController : ControllerBase
     public async Task<IActionResult> GetAllDonationsAsync([FromRoute] string donorId)
     {
         if (!Guid.TryParse(donorId, out _))
-            return BadRequest("Invalid Donation ID.");
+            throw new InvalidOperationException(ApiMessage.Gateway_InvalidId_Warning);
 
-        IEnumerable<List<DonationResponseDTO>> donations = await _donationService.GetAllDonationsAsync(Guid.Parse(donorId));
+        List<DonationResponseDTO> donations = await _donationService.GetAllDonationsAsync(Guid.Parse(donorId));
         return Ok(donations);
     }
 
@@ -52,7 +53,7 @@ public class DonationController : ControllerBase
     public async Task<IActionResult> GetDonationByIdAsync([FromRoute] string id)
     {
         if (!Guid.TryParse(id, out _))
-            return BadRequest("Invalid Donation ID.");
+            throw new InvalidOperationException(ApiMessage.Gateway_InvalidId_Warning);
 
         DonationResponseDTO donation = await _donationService.GetDonationByIdAsync(Guid.Parse(id));
         return Ok(donation);
@@ -62,7 +63,7 @@ public class DonationController : ControllerBase
     public async Task<IActionResult> UpdateDonationAsync([FromRoute] string id, [FromBody] DonationModel donationModel)
     {
         if (!Guid.TryParse(id, out _))
-            return BadRequest("Invalid Donation ID.");
+            throw new InvalidOperationException(ApiMessage.Gateway_InvalidId_Warning);
 
         DonationDTO donationDTO = donationModel.Adapt<DonationDTO>();
         await _donationService.UpdateDonationAsync(Guid.Parse(id), donationDTO);

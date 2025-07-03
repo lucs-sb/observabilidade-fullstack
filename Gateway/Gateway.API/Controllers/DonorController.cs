@@ -1,4 +1,5 @@
 ﻿using Gateway.API.Models.Donor;
+using Gateway.API.Resources;
 using Gateway.Domain.DTOs;
 using Gateway.Domain.DTOs.Response;
 using Gateway.Domain.Interfaces;
@@ -32,7 +33,7 @@ public class DonorController : ControllerBase
     public async Task<IActionResult> DeleteDonorAsync([FromRoute] string id)
     {
         if (!Guid.TryParse(id, out _))
-            return BadRequest("Invalid donor ID.");
+            throw new InvalidOperationException(ApiMessage.Gateway_InvalidId_Warning);
 
         await _donorService.DeleteDonorAsync(Guid.Parse(id));
         return NoContent();
@@ -41,7 +42,7 @@ public class DonorController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllDonorsAsync()
     {
-        IEnumerable<List<DonorResponseDTO>> donors = await _donorService.GetAllDonorsAsync();
+        List<DonorResponseDTO> donors = await _donorService.GetAllDonorsAsync();
         return Ok(donors);
     }
 
@@ -49,7 +50,7 @@ public class DonorController : ControllerBase
     public async Task<IActionResult> GetDonorByIdAsync([FromRoute] string id)
     {
         if (!Guid.TryParse(id, out _))
-            return BadRequest("Invalid donor ID.");
+            throw new InvalidOperationException(ApiMessage.Gateway_InvalidId_Warning);
 
         DonorResponseDTO donor = await _donorService.GetDonorByIdAsync(Guid.Parse(id));
         return Ok(donor);
@@ -59,7 +60,7 @@ public class DonorController : ControllerBase
     public async Task<IActionResult> UpdateDonorAsync([FromRoute] string id, [FromBody] DonorModel donorModel)
     {
         if (!Guid.TryParse(id, out _))
-            return BadRequest("Invalid donor ID.");
+            throw new InvalidOperationException(ApiMessage.Gateway_InvalidId_Warning);
 
         DonorDTO donorDTO = donorModel.Adapt<DonorDTO>();
         await _donorService.UpdateDonorAsync(Guid.Parse(id), donorDTO);

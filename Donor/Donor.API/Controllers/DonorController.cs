@@ -23,7 +23,7 @@ public class DonorController : ControllerBase
     {
         DonorDTO donorDTO = donorModel.Adapt<DonorDTO>();
         await _donorService.CreateDonorAsync(donorDTO);
-        return Created();
+        return NoContent();
     }
 
     [HttpDelete("{id}")]
@@ -36,7 +36,7 @@ public class DonorController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllDonorsAsync()
     {
-        IEnumerable<List<DonorResponseDTO>> donors = await _donorService.GetAllDonorsAsync();
+        List<DonorResponseDTO> donors = await _donorService.GetAllDonorsAsync();
         return Ok(donors);
     }
 

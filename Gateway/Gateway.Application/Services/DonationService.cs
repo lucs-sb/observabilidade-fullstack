@@ -24,7 +24,7 @@ public class DonationService : IDonationService
         await _donationIntegrationService.DeleteDonationAsync(id);
     }
 
-    public async Task<IEnumerable<List<DonationResponseDTO>>> GetAllDonationsAsync(Guid donorId)
+    public async Task<List<DonationResponseDTO>> GetAllDonationsAsync(Guid donorId)
     {
         return await _donationIntegrationService.GetAllDonationsAsync(donorId);
     }

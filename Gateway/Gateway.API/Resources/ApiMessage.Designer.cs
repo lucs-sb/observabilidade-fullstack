@@ -61,6 +61,15 @@ namespace Gateway.API.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a O Id é inválido.
+        /// </summary>
+        public static string Gateway_InvalidId_Warning {
+            get {
+                return ResourceManager.GetString("Gateway.InvalidId.Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a O campo &apos;{0}&apos; é obrigatório.
         /// </summary>
         public static string Gateway_RequireField_Warning {

@@ -39,7 +39,7 @@ public class DonorIntegrationService : IDonorIntegrationService
 
         ApiResponse apiResponse = await _microApiClient.PostHttpClientRequest(apiPostRequest);
 
-        if (apiResponse.StatusCode != HttpStatusCode.Created)
+        if (apiResponse.StatusCode != HttpStatusCode.NoContent)
         {
             ProblemResponse problemResponse = apiResponse.Content.DeserializeObject<ProblemResponse>();
 
@@ -64,7 +64,7 @@ public class DonorIntegrationService : IDonorIntegrationService
         }
     }
 
-    public async Task<IEnumerable<List<DonorResponseDTO>>> GetAllDonorsAsync()
+    public async Task<List<DonorResponseDTO>> GetAllDonorsAsync()
     {
         ApiGetRequest apiGetRequest = new()
         {
@@ -82,7 +82,7 @@ public class DonorIntegrationService : IDonorIntegrationService
 
         List<DonorResponse> donorsResponse = apiResponse.Content.DeserializeObject<List<DonorResponse>>();
 
-        return (IEnumerable<List<DonorResponseDTO>>)donorsResponse.Adapt<List<DonorResponseDTO>>();
+        return donorsResponse.Adapt<List<DonorResponseDTO>>();
     }
 
     public async Task<DonorResponseDTO> GetDonorByIdAsync(Guid id)

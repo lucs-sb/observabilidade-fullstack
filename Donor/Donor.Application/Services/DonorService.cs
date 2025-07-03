@@ -68,11 +68,11 @@ public class DonorService : IDonorService
         }
     }
 
-    public async Task<IEnumerable<List<DonorResponseDTO>>> GetAllDonorsAsync()
+    public async Task<List<DonorResponseDTO>> GetAllDonorsAsync()
     {
         List<Domain.Entities.Donor> donors = await _unitOfWork.Repository<Domain.Entities.Donor>().GetAllAsync();
 
-        return donors.Adapt<IEnumerable<List<DonorResponseDTO>>>();
+        return donors.Adapt<List<DonorResponseDTO>>();
     }
 
     public async Task<DonorResponseDTO> GetDonorByIdAsync(Guid id)
@@ -90,7 +90,7 @@ public class DonorService : IDonorService
         {
             Domain.Entities.Donor? donor = await _unitOfWork.Repository<Domain.Entities.Donor>().GetByIdAsync(id) ?? throw new InvalidOperationException(BusinessMessage.Donor_NotFound_Warning);
 
-            donor = donorDTO.Adapt<Domain.Entities.Donor>();
+            donorDTO.Adapt(donor);
 
             _unitOfWork.Repository<Domain.Entities.Donor>().Update(donor);
 
