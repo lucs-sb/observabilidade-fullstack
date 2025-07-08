@@ -1,0 +1,19 @@
+global:
+  scrape_interval: 10s   # intervalo de coleta de métricas
+
+scrape_configs:
+  - job_name: 'gateway'
+    static_configs:
+      - targets: ['gateway-api:8080']    # endereço interno do serviço e porta
+  - job_name: 'auth'
+    static_configs:
+      - targets: ['auth-api:8080']
+  - job_name: 'donor'
+    static_configs:
+      - targets: ['donor-api:8080']
+  - job_name: 'donation'
+    static_configs:
+      - targets: ['donation-api:8080']
+  - job_name: 'postgres-exporter'
+    static_configs:
+      - targets: ['postgres-exporter:9187']

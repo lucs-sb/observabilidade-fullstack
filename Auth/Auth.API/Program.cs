@@ -4,8 +4,11 @@ using Auth.CrossCutting.IoC;
 using Auth.Domain.Entities;
 using Auth.Infrastructure.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
-using System.Drawing;
-using System.Reflection;
+using Npgsql;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +28,29 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("Database"));
 });
+
+builder.Services.AddOpenTelemetry()
+    .ConfigureResource(res => res.AddService(builder.Environment.ApplicationName)) // Nomeia o serviço
+    .WithMetrics(metricsBuilder => {
+        metricsBuilder
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            // Metrics provides by ASP.NET Core in .NET 8
+            .AddMeter("Microsoft.AspNetCore.Hosting")
+            .AddMeter("Microsoft.AspNetCore.Server.Kestrel")
+            // Metrics provided by System.Net libraries
+            .AddMeter("System.Net.Http")
+            .AddMeter("System.Net.NameResolution")
+            .AddPrometheusExporter();
+    })
+    .WithTracing(tracingBuilder => {
+        tracingBuilder
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddEntityFrameworkCoreInstrumentation() // se usar EF Core
+            .AddNpgsql() // instrumenta chamadas ao PostgreSQL via Npgsql
+            .AddOtlpExporter(opt => opt.Endpoint = new Uri("http://jaeger:4317")); // exporta traces via OTLP para Jaeger
+    });
 
 // Dependences Injections
 builder.Services.AddApplicationDI();
@@ -65,5 +91,7 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
 
 app.MapControllers();
+
+app.MapPrometheusScrapingEndpoint();
 
 app.Run();
