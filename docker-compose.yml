@@ -106,8 +106,8 @@ services:
     image: jaegertracing/all-in-one:latest
     command: ["--collector.otlp.enabled=true"]
     ports:
-      - "16686:16686"      
-      - "6831:6831/udp"    
+      - "16686:16686"       
+      - "4317:4317" 
     networks:
       - drs_network  
 
@@ -129,8 +129,7 @@ services:
       - ./Observability/otel-collector-config.yaml:/etc/otel/config.yaml:ro
     command:
       - "--config=/etc/otel/config.yaml"
-    ports:
-      - "4317:4317"     
+    ports:    
       - "55681:55681"   
       - "8889:8889"
     depends_on:

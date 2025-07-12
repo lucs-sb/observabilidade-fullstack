@@ -45,7 +45,7 @@ builder.Services.AddOpenTelemetry()
             .AddHttpClientInstrumentation()
             .AddEntityFrameworkCoreInstrumentation() 
             .AddNpgsql() 
-            .AddOtlpExporter(opt => opt.Endpoint = new Uri("http://otel-collector:4317")); 
+            .AddOtlpExporter(opt => opt.Endpoint = new Uri("http://jaeger:4317")); 
     });
 
 builder.Logging.AddOpenTelemetry(options =>

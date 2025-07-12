@@ -12,22 +12,22 @@ exporters:
     endpoint: "0.0.0.0:8889"
     namespace: "otelcol"
 
-  otlp:
+  otlp/jaeger:
     endpoint: "http://jaeger:4317"
     tls:
       insecure: true
 
- # loki:
- #   endpoint: "http://loki:3100/loki/api/v1/push"
- #   labels:
- #     job: otel-logs
+  #loki:
+  #  endpoint: "http://loki:3100/loki/api/v1/push"
+  #  labels:
+  #    job: otel-logs
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp]
+      exporters: [otlp/jaeger]
 
     metrics:
       receivers: [otlp]
@@ -36,5 +36,5 @@ service:
 
     #logs:
     #  receivers: [otlp]
-    #  processors: [batch, memory_limiter]
-    #  exporters: [loki, debug]
+    #  processors: [batch]
+    #  exporters: [loki]
