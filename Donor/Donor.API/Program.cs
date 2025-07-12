@@ -4,6 +4,7 @@ using Donor.CrossCutting.IoC;
 using Donor.Infrastructure.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -29,27 +30,33 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 
 builder.Services.AddOpenTelemetry()
-    .ConfigureResource(res => res.AddService(builder.Environment.ApplicationName)) // Nomeia o serviço
+    .ConfigureResource(res => res.AddService(builder.Environment.ApplicationName)) 
     .WithMetrics(metricsBuilder => {
         metricsBuilder
-            .AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation()
-            // Metrics provides by ASP.NET Core in .NET 8
-            .AddMeter("Microsoft.AspNetCore.Hosting")
-            .AddMeter("Microsoft.AspNetCore.Server.Kestrel")
-            // Metrics provided by System.Net libraries
-            .AddMeter("System.Net.Http")
-            .AddMeter("System.Net.NameResolution")
-            .AddPrometheusExporter();
+          .AddAspNetCoreInstrumentation()
+          .AddHttpClientInstrumentation()
+          .AddRuntimeInstrumentation()     
+          .AddProcessInstrumentation()     
+          .AddPrometheusExporter();
     })
     .WithTracing(tracingBuilder => {
         tracingBuilder
             .AddAspNetCoreInstrumentation()
             .AddHttpClientInstrumentation()
-            .AddEntityFrameworkCoreInstrumentation() // se usar EF Core
-            .AddNpgsql() // instrumenta chamadas ao PostgreSQL via Npgsql
-            .AddOtlpExporter(opt => opt.Endpoint = new Uri("http://jaeger:4317")); // exporta traces via OTLP para Jaeger
+            .AddEntityFrameworkCoreInstrumentation() 
+            .AddNpgsql() 
+            .AddOtlpExporter(opt => opt.Endpoint = new Uri("http://otel-collector:4317")); 
     });
+
+builder.Logging.AddOpenTelemetry(options =>
+{
+    options.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(builder.Environment.ApplicationName));
+    options.AddOtlpExporter(opt =>
+    {
+        opt.Endpoint = new Uri("http://otel-collector:4317");
+        opt.Protocol = OtlpExportProtocol.HttpProtobuf;
+    });
+});
 
 // Dependences Injections
 builder.Services.AddApplicationDI();

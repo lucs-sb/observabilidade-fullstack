@@ -90,6 +90,7 @@ services:
     image: prom/prometheus:latest
     volumes:
       - ./Observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
     ports:
       - "9090:9090"
     networks:
@@ -105,9 +106,8 @@ services:
     image: jaegertracing/all-in-one:latest
     command: ["--collector.otlp.enabled=true"]
     ports:
-      - "16686:16686"      # UI Web do Jaeger
-      - "6831:6831/udp"    # Porta UDP do agente (Jaeger Thrift)
-      - "4317:4317"        # Porta gRPC do OTLP collector
+      - "16686:16686"      
+      - "6831:6831/udp"    
     networks:
       - drs_network  
 
@@ -117,6 +117,30 @@ services:
       - "3000:3000"
     networks:
       - drs_network  
+    volumes:
+      - grafana-data:/var/lib/grafana
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: otel-collector
+    networks:
+      - drs_network
+    volumes:
+      - ./Observability/otel-collector-config.yaml:/etc/otel/config.yaml:ro
+    command:
+      - "--config=/etc/otel/config.yaml"
+    ports:
+      - "4317:4317"     
+      - "55681:55681"   
+      - "8889:8889"
+    depends_on:
+      - gateway-api
+      - auth-api
+      - donor-api
+      - donation-api
+      - jaeger
 
 volumes:
   db-data:
+  prometheus-data:
+  grafana-data:
