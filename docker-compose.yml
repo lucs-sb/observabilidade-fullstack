@@ -29,9 +29,10 @@ services:
       - db
 
   gateway-api:
-    build:
-      context: .
-      dockerfile: Gateway/Gateway.API/Dockerfile
+    image: lucs5281/gateway-api:latest
+    #build:
+    #  context: .
+    #  dockerfile: Gateway/Gateway.API/Dockerfile
     container_name: gateway_api
     networks:
       - drs_network
@@ -46,9 +47,10 @@ services:
       - "8080:8080"
 
   auth-api:
-    build:
-      context: .
-      dockerfile: Auth/Auth.API/Dockerfile
+    image: lucs5281/auth-api:latest
+    #build:
+    #  context: .
+    #  dockerfile: Auth/Auth.API/Dockerfile
     container_name: auth_api
     depends_on:
       - db
@@ -61,9 +63,10 @@ services:
       AuthSettings__ExpirationMinutes: "30"
 
   donor-api:
-    build:
-      context: .
-      dockerfile: Donor/Donor.API/Dockerfile
+    image: lucs5281/donor-api:latest
+    #build:
+    #  context: .
+    #  dockerfile: Donor/Donor.API/Dockerfile
     container_name: donor_api
     depends_on:
       - db
@@ -74,9 +77,10 @@ services:
       ConnectionStrings__Database: "Host=drs_db;Port=5432;Pooling=true;Database=donation_registration_system;Username=admin;Password=admin"
 
   donation-api:
-    build:
-      context: .
-      dockerfile: Donation/Donation.API/Dockerfile
+    image: lucs5281/donation-api:latest
+    #build:
+    #  context: .
+    #  dockerfile: Donation/Donation.API/Dockerfile
     container_name: donation_api
     depends_on:
       - db
