@@ -13,7 +13,7 @@ public class DonationModelValidator : AbstractValidator<DonationModel>
 
         RuleFor(model => model.DateOfDonation).Cascade(CascadeMode.Stop)
             .NotEmpty().WithMessage(model => string.Format(ApiMessage.Gateway_RequireField_Warning, nameof(model.DateOfDonation)))
-            .LessThan(DateTime.Today).WithMessage(ApiMessage.Gateway_Validation_Field_Fail);
+            .LessThan(DateTime.Today.AddDays(1)).WithMessage(ApiMessage.Gateway_Validation_Field_Fail);
 
         RuleFor(model => model.DonationType).Cascade(CascadeMode.Stop)
             .NotEmpty().WithMessage(model => string.Format(ApiMessage.Gateway_RequireField_Warning, nameof(model.DonationType)))

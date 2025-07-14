@@ -21,7 +21,7 @@ public class DonorModelValidator : AbstractValidator<DonorModel>
 
         RuleFor(model => model.DateOfBirth).Cascade(CascadeMode.Stop)
             .NotEmpty().WithMessage(model => string.Format(ApiMessage.Gateway_RequireField_Warning, nameof(model.DateOfBirth)))
-            .LessThan(DateTime.Today).WithMessage(ApiMessage.Gateway_Validation_Field_Fail)
+            .LessThan(DateTime.Today.AddDays(1)).WithMessage(ApiMessage.Gateway_Validation_Field_Fail)
             .GreaterThan(DateTime.Today.AddYears(-120)).WithMessage(ApiMessage.Gateway_Validation_Field_Fail);
 
         RuleFor(model => model.Gender).Cascade(CascadeMode.Stop)
