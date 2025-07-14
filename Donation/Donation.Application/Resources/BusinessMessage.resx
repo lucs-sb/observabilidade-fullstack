@@ -121,6 +121,6 @@
     <value>Doação não encontrada</value>
   </data>
   <data name="Donation.DuplicateBagNumber.Warning" xml:space="preserve">
-    <value>E-mail já existe</value>
+    <value>Número do saco de coleta já existe</value>
   </data>
 </root>

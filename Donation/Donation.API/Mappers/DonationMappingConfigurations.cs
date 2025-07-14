@@ -20,7 +20,7 @@ public static class DonationMappingConfigurations
         TypeAdapterConfig<DonationDTO, Domain.Entities.Donation>
             .NewConfig()
             .Map(dest => dest.DonorId, src => src.DonorId)
-            .Map(dest => dest.DateOfDonation, src => src.DateOfDonation)
+            .Map(dest => dest.DateOfDonation, src => src.DateOfDonation.ToUniversalTime())
             .Map(dest => dest.DonationType, src => src.DonationType)
             .Map(dest => dest.VolumeMl, src => src.VolumeMl)
             .Map(dest => dest.BagNumber, src => src.BagNumber);

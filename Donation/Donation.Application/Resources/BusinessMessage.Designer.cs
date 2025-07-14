@@ -61,7 +61,7 @@ namespace Donation.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a E-mail já existe.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Número do saco de coleta já existe.
         /// </summary>
         public static string Donation_DuplicateBagNumber_Warning {
             get {
