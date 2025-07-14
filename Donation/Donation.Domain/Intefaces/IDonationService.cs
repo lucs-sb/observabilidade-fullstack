@@ -7,7 +7,7 @@ public interface IDonationService
 {
     Task CreateDonationAsync(DonationDTO donationDTO);
     Task<DonationResponseDTO> GetDonationByIdAsync(Guid id);
-    Task<List<DonationResponseDTO>> GetAllDonationsAsync();
+    Task<List<DonationResponseDTO>> GetAllDonationsAsync(Guid donorId);
     Task UpdateDonationAsync(Guid id, DonationDTO donationDTO);
     Task DeleteDonationAsync(Guid id);
 }

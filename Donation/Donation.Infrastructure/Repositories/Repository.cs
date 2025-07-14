@@ -10,7 +10,7 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
 
     public Repository(AppDbContext dbContext) => _dbContext = dbContext;
 
-    public async Task<List<TEntity>> GetAllAsync() => await _dbContext.Set<TEntity>().ToListAsync();
+    public async Task<List<TEntity>> GetAllByDonorIdAsync(Guid donorId) => await _dbContext.Set<TEntity>().Where(e => EF.Property<Guid>(e, "DonorId") == donorId).ToListAsync();
 
     public async Task<TEntity?> GetByIdAsync(Guid id) => await _dbContext.Set<TEntity>().FindAsync(id);
 

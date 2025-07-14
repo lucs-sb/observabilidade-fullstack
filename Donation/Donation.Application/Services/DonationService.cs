@@ -68,9 +68,9 @@ public class DonationService : IDonationService
         }
     }
 
-    public async Task<List<DonationResponseDTO>> GetAllDonationsAsync()
+    public async Task<List<DonationResponseDTO>> GetAllDonationsAsync(Guid donorId)
     {
-        List<Domain.Entities.Donation> donations = await _unitOfWork.Repository<Domain.Entities.Donation>().GetAllAsync();
+        List<Domain.Entities.Donation> donations = await _unitOfWork.Repository<Domain.Entities.Donation>().GetAllByDonorIdAsync(donorId);
 
         return donations.Adapt<List<DonationResponseDTO>>();
     }

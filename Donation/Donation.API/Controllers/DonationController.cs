@@ -33,10 +33,10 @@ public class DonationController : ControllerBase
         return NoContent();
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetAllDonationsAsync()
+    [HttpGet("donor/{donorId}")]
+    public async Task<IActionResult> GetAllDonationsAsync([FromRoute] string donorId)
     {
-        List<DonationResponseDTO> donations = await _donationService.GetAllDonationsAsync();
+        List<DonationResponseDTO> donations = await _donationService.GetAllDonationsAsync(Guid.Parse(donorId));
         return Ok(donations);
     }
 
