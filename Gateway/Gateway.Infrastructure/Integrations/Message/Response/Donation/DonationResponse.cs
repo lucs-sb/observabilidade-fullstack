@@ -8,7 +8,7 @@ public class DonationResponse
     [JsonPropertyName("id")]
     public Guid Id { get; set; }
 
-    [JsonPropertyName("donationId")]
+    [JsonPropertyName("donorId")]
     public Guid DonorId { get; set; }
 
     [JsonPropertyName("dateOfDonation")]

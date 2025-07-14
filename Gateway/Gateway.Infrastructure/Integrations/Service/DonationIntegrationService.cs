@@ -39,7 +39,7 @@ public class DonationIntegrationService : IDonationIntegrationService
 
         ApiResponse apiResponse = await _microApiClient.PostHttpClientRequest(apiPostRequest);
 
-        if (apiResponse.StatusCode != HttpStatusCode.Created)
+        if (apiResponse.StatusCode != HttpStatusCode.NoContent)
         {
             ProblemResponse problemResponse = apiResponse.Content.DeserializeObject<ProblemResponse>();
 
