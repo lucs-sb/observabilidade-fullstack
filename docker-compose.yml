@@ -13,7 +13,7 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - db-data:/var/lib/postgresql
     ports:
       - "5432:5432"
 
@@ -108,10 +108,8 @@ services:
 
   jaeger:
     image: jaegertracing/all-in-one:latest
-    command: ["--collector.otlp.enabled=true"]
     ports:
       - "16686:16686"       
-      - "4317:4317" 
     networks:
       - drs_network  
 
@@ -138,17 +136,16 @@ services:
       restart: unless-stopped
 
   otel-collector:
-    image: otel/opentelemetry-collector-contrib:latest
-    container_name: otel-collector
+    image: otel/opentelemetry-collector:latest
     networks:
       - drs_network
     volumes:
-      - ./Observability/otel-collector-config.yaml:/etc/otel/config.yaml:ro
+      - ./Observability/otel-collector-config.yaml:/etc/otelcol/config.yaml
     command:
-      - "--config=/etc/otel/config.yaml"
+      - --config=/etc/otelcol/config.yaml
     ports:    
-      - "55681:55681"   
-      - "8889:8889"
+      - "4317:4317"   
+      - "4318:4318"   
     depends_on:
       - gateway-api
       - auth-api
