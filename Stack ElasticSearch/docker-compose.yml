@@ -1,0 +1,169 @@
+networks:
+  drs_network:
+    driver: bridge
+
+services:
+  db:
+    image: postgres:latest
+    container_name: drs_db
+    networks:
+      - drs_network
+    environment:
+      POSTGRES_DB: donation_registration_system
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - db-data:/var/lib/postgresql
+    ports:
+      - "5432:5432"
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:latest
+    networks:
+      - drs_network  
+    ports:
+      - "9187:9187"
+    environment:
+      - DATA_SOURCE_NAME=postgresql://admin:admin@db:5432/donation_registration_system?sslmode=disable
+    depends_on:
+      - db
+
+  gateway-api:
+    #image: lucs5281/gateway-api:latest
+    build:
+      context: .
+      dockerfile: Gateway/Gateway.API/Dockerfile
+    container_name: gateway_api
+    networks:
+      - drs_network
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      IntegrationSettings__AuthUri: "http://auth_api:8080/api/auth"
+      IntegrationSettings__DonorUri: "http://donor_api:8080/api/donor"
+      IntegrationSettings__DonationUri: "http://donation_api:8080/api/donation"
+      AuthSettings__SecretKey: "U7r4p$21xT!e8qLmZ9vFgH1rS6nK0wYc"
+      AuthSettings__ExpirationMinutes: "30"
+    ports:
+      - "8080:8080"
+
+  auth-api:
+    #image: lucs5281/auth-api:latest
+    build:
+      context: .
+      dockerfile: Auth/Auth.API/Dockerfile
+    container_name: auth_api
+    depends_on:
+      - db
+    networks:
+      - drs_network
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Database: "Host=drs_db;Port=5432;Pooling=true;Database=donation_registration_system;Username=admin;Password=admin"
+      AuthSettings__SecretKey: "U7r4p$21xT!e8qLmZ9vFgH1rS6nK0wYc"
+      AuthSettings__ExpirationMinutes: "30"
+
+  donor-api:
+    #image: lucs5281/donor-api:latest
+    build:
+      context: .
+      dockerfile: Donor/Donor.API/Dockerfile
+    container_name: donor_api
+    depends_on:
+      - db
+    networks:
+      - drs_network
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Database: "Host=drs_db;Port=5432;Pooling=true;Database=donation_registration_system;Username=admin;Password=admin"
+
+  donation-api:
+    #image: lucs5281/donation-api:latest
+    build:
+      context: .
+      dockerfile: Donation/Donation.API/Dockerfile
+    container_name: donation_api
+    depends_on:
+      - db
+    networks:
+      - drs_network
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Database: "Host=drs_db;Port=5432;Pooling=true;Database=donation_registration_system;Username=admin;Password=admin"
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./Observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - drs_network  
+    depends_on:
+      - gateway-api
+      - auth-api
+      - donor-api
+      - donation-api
+      - postgres-exporter
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "16686:16686"       
+    networks:
+      - drs_network  
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    networks:
+      - drs_network  
+    volumes:
+      - grafana-data:/var/lib/grafana
+
+  cadvisor:
+      image: gcr.io/cadvisor/cadvisor:latest
+      volumes:
+        - /:/rootfs:ro
+        - /var/run:/var/run:rw     
+        - /sys:/sys:ro            
+        - /var/lib/docker/:/var/lib/docker:ro
+      ports:
+        - "8081:8080"              
+      networks:
+        - drs_network
+      restart: unless-stopped
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    networks:
+      - drs_network
+    volumes:
+      - ./Observability/otel-collector-config.yaml:/etc/otelcol/config.yaml
+    command:
+      - --config=/etc/otelcol/config.yaml
+    ports:
+      - "4317:4317"   
+      - "4318:4318"   
+    depends_on:
+      - gateway-api
+      - auth-api
+      - donor-api
+      - donation-api
+      - jaeger
+  loki:
+    image: grafana/loki:latest
+    networks:
+      - drs_network
+    ports:
+      - "3100:3100"              
+    command: -config.file=/etc/loki/config.yml
+    volumes:
+      - ./Observability/loki-config.yml:/etc/loki/config.yml
+      - ./loki-data:/loki
+
+volumes:
+  db-data:
+  prometheus-data:
+  grafana-data:

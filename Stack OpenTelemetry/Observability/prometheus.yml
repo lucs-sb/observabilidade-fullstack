@@ -1,0 +1,26 @@
+global:
+  scrape_interval: 3s  
+
+scrape_configs:
+  - job_name: 'gateway'
+    static_configs:
+      - targets: ['gateway-api:8080']
+  - job_name: 'auth'
+    static_configs:
+      - targets: ['auth-api:8080']
+  - job_name: 'donor'
+    static_configs:
+      - targets: ['donor-api:8080']
+  - job_name: 'donation'
+    static_configs:
+      - targets: ['donation-api:8080']
+  - job_name: 'postgres-exporter'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+  - job_name: 'otel-collector'
+    static_configs:
+      - targets: ['otel-collector:8889']
+  - job_name: 'cadvisor'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['cadvisor:8080']
