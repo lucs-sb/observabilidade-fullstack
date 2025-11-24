@@ -136,14 +136,14 @@ services:
       restart: unless-stopped
 
   otel-collector:
-    image: otel/opentelemetry-collector:latest
+    image: otel/opentelemetry-collector-contrib:latest
     networks:
       - drs_network
     volumes:
       - ./Observability/otel-collector-config.yaml:/etc/otelcol/config.yaml
     command:
       - --config=/etc/otelcol/config.yaml
-    ports:    
+    ports:
       - "4317:4317"   
       - "4318:4318"   
     depends_on:
@@ -152,6 +152,16 @@ services:
       - donor-api
       - donation-api
       - jaeger
+  loki:
+    image: grafana/loki:latest
+    networks:
+      - drs_network
+    ports:
+      - "3100:3100"              
+    command: -config.file=/etc/loki/config.yml
+    volumes:
+      - ./Observability/loki-config.yml:/etc/loki/config.yml
+      - ./loki-data:/loki
 
 volumes:
   db-data:
