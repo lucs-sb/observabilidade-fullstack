@@ -10,11 +10,6 @@ processors:
   batch:
     timeout: 10s
     send_batch_size: 1024
-  transform/add_app_name:
-    log_statements:
-      - context: resource
-        statements:
-          - set(attributes["application.name"], attributes["service.name"])
 
 exporters:
   debug:
@@ -44,5 +39,5 @@ service:
 
     logs:
       receivers: [otlp]
-      processors: [transform/add_app_name, batch]
+      processors: [batch]
       exporters: [otlphttp, debug]

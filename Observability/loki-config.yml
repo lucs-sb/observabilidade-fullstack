@@ -31,5 +31,5 @@ limits_config:
       attributes_config:
         - action: index_label
           attributes:
-            - app
+            - service.name
   allow_structured_metadata: true   # OBRIGATÓRIO para OTLP nativo

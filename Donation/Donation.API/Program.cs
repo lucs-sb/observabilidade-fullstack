@@ -48,13 +48,15 @@ builder.Services.AddOpenTelemetry()
             .AddOtlpExporter(opt => opt.Endpoint = new Uri("http://otel-collector:4317")); 
     });
 
+builder.Logging.ClearProviders();
 builder.Logging.AddOpenTelemetry(options =>
 {
     options.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(builder.Environment.ApplicationName));
+    options.IncludeFormattedMessage = true;
+    options.ParseStateValues = true;
     options.AddOtlpExporter(opt =>
     {
         opt.Endpoint = new Uri("http://otel-collector:4317");
-        opt.Protocol = OtlpExportProtocol.HttpProtobuf;
     });
 });
 
