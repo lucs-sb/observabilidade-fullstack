@@ -3,11 +3,40 @@ using Auth.API.Middleware;
 using Auth.CrossCutting.IoC;
 using Auth.Domain.Entities;
 using Auth.Infrastructure.Repositories.Context;
+using Elastic.Apm.NetCoreAll;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using System.Text.Json.Serialization;
+using Serilog;
+using Serilog.Sinks.Elasticsearch;
+
+var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
+
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .Enrich.WithMachineName()
+    .Enrich.WithThreadId()
+    .Enrich.WithProperty("Application", "auth-api")
+    .WriteTo.Console()
+    .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri("http://elasticsearch:9200"))
+    {
+        AutoRegisterTemplate = true,
+        IndexFormat = $"auth-api-logs-{environment.ToLower().Replace(".", "-")}-{DateTime.UtcNow:yyyy-MM}",
+        ModifyConnectionSettings = conn =>
+        conn.BasicAuthentication("elastic", "elastic")
+    })
+    .ReadFrom.Configuration(new ConfigurationBuilder()
+        .AddJsonFile("appsettings.json")
+        .AddJsonFile($"appsettings.{environment}.json", optional: true)
+        .AddEnvironmentVariables()
+        .Build())
+    .CreateLogger();
+
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog();
 
 // Add services to the container.
 builder.Services.AddControllers().AddJsonOptions(options =>
@@ -24,6 +53,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("Database"));
 });
+
+builder.Services.AddAllElasticApm();
 
 // Dependences Injections
 builder.Services.AddApplicationDI();

@@ -1,13 +1,13 @@
 networks:
-  drs_network:
+  ses_drs_network:
     driver: bridge
 
 services:
-  db:
+  ses_db:
     image: postgres:latest
-    container_name: drs_db
+    container_name: ses_drs_db
     networks:
-      - drs_network
+      - ses_drs_network
     environment:
       POSTGRES_DB: donation_registration_system
       POSTGRES_USER: admin
@@ -17,153 +17,122 @@ services:
     ports:
       - "5432:5432"
 
-  postgres-exporter:
-    image: prometheuscommunity/postgres-exporter:latest
-    networks:
-      - drs_network  
-    ports:
-      - "9187:9187"
-    environment:
-      - DATA_SOURCE_NAME=postgresql://admin:admin@db:5432/donation_registration_system?sslmode=disable
-    depends_on:
-      - db
 
-  gateway-api:
+  ses_gateway-api:
     #image: lucs5281/gateway-api:latest
     build:
       context: .
       dockerfile: Gateway/Gateway.API/Dockerfile
-    container_name: gateway_api
+    container_name: ses_gateway_api
     networks:
-      - drs_network
+      - ses_drs_network
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      IntegrationSettings__AuthUri: "http://auth_api:8080/api/auth"
-      IntegrationSettings__DonorUri: "http://donor_api:8080/api/donor"
-      IntegrationSettings__DonationUri: "http://donation_api:8080/api/donation"
+      IntegrationSettings__AuthUri: "http://ses_auth_api:8080/api/auth"
+      IntegrationSettings__DonorUri: "http://ses_donor_api:8080/api/donor"
+      IntegrationSettings__DonationUri: "http://ses_donation_api:8080/api/donation"
       AuthSettings__SecretKey: "U7r4p$21xT!e8qLmZ9vFgH1rS6nK0wYc"
       AuthSettings__ExpirationMinutes: "30"
     ports:
       - "8080:8080"
 
-  auth-api:
+  ses_auth-api:
     #image: lucs5281/auth-api:latest
     build:
       context: .
       dockerfile: Auth/Auth.API/Dockerfile
-    container_name: auth_api
+    container_name: ses_auth_api
     depends_on:
-      - db
+      - ses_db
     networks:
-      - drs_network
+      - ses_drs_network
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__Database: "Host=drs_db;Port=5432;Pooling=true;Database=donation_registration_system;Username=admin;Password=admin"
+      ConnectionStrings__Database: "Host=ses_drs_db;Port=5432;Pooling=true;Database=donation_registration_system;Username=admin;Password=admin"
       AuthSettings__SecretKey: "U7r4p$21xT!e8qLmZ9vFgH1rS6nK0wYc"
       AuthSettings__ExpirationMinutes: "30"
 
-  donor-api:
+  ses_donor-api:
     #image: lucs5281/donor-api:latest
     build:
       context: .
       dockerfile: Donor/Donor.API/Dockerfile
-    container_name: donor_api
+    container_name: ses_donor_api
     depends_on:
-      - db
+      - ses_db
     networks:
-      - drs_network
+      - ses_drs_network
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__Database: "Host=drs_db;Port=5432;Pooling=true;Database=donation_registration_system;Username=admin;Password=admin"
+      ConnectionStrings__Database: "Host=ses_drs_db;Port=5432;Pooling=true;Database=donation_registration_system;Username=admin;Password=admin"
 
-  donation-api:
+  ses_donation-api:
     #image: lucs5281/donation-api:latest
     build:
       context: .
       dockerfile: Donation/Donation.API/Dockerfile
-    container_name: donation_api
+    container_name: ses_donation_api
     depends_on:
-      - db
+      - ses_db
     networks:
-      - drs_network
+      - ses_drs_network
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__Database: "Host=drs_db;Port=5432;Pooling=true;Database=donation_registration_system;Username=admin;Password=admin"
+      ConnectionStrings__Database: "Host=ses_drs_db;Port=5432;Pooling=true;Database=donation_registration_system;Username=admin;Password=admin"
 
-  prometheus:
-    image: prom/prometheus:latest
-    volumes:
-      - ./Observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      - prometheus-data:/prometheus
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=true
+      - xpack.security.transport.ssl.enabled=false
+      - ELASTIC_USERNAME=elastic
+      - ELASTIC_PASSWORD=elastic
     ports:
-      - "9090:9090"
+      - "9200:9200"
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
     networks:
-      - drs_network  
+      - ses_drs_network  
     depends_on:
-      - gateway-api
-      - auth-api
-      - donor-api
-      - donation-api
-      - postgres-exporter
+      - ses_gateway-api
+      - ses_auth-api
+      - ses_donor-api
+      - ses_donation-api
 
-  jaeger:
-    image: jaegertracing/all-in-one:latest
-    ports:
-      - "16686:16686"       
-    networks:
-      - drs_network  
-
-  grafana:
-    image: grafana/grafana:latest
-    ports:
-      - "3000:3000"
-    networks:
-      - drs_network  
-    volumes:
-      - grafana-data:/var/lib/grafana
-
-  cadvisor:
-      image: gcr.io/cadvisor/cadvisor:latest
-      volumes:
-        - /:/rootfs:ro
-        - /var/run:/var/run:rw     
-        - /sys:/sys:ro            
-        - /var/lib/docker/:/var/lib/docker:ro
-      ports:
-        - "8081:8080"              
-      networks:
-        - drs_network
-      restart: unless-stopped
-
-  otel-collector:
-    image: otel/opentelemetry-collector-contrib:latest
-    networks:
-      - drs_network
-    volumes:
-      - ./Observability/otel-collector-config.yaml:/etc/otelcol/config.yaml
-    command:
-      - --config=/etc/otelcol/config.yaml
-    ports:
-      - "4317:4317"   
-      - "4318:4318"   
+  ses_kibana:
+    image: docker.elastic.co/kibana/kibana:8.13.4
+    container_name: ses_kibana
     depends_on:
-      - gateway-api
-      - auth-api
-      - donor-api
-      - donation-api
-      - jaeger
-  loki:
-    image: grafana/loki:latest
-    networks:
-      - drs_network
+      - elasticsearch
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_SERVICEACCOUNTTOKEN=AAEAAWVsYXN0aWMva2liYW5hL2tpYmFuYS1zeXN0ZW06WkFYZHgwMExTeWlGZTBJTFg4dWhHZw
     ports:
-      - "3100:3100"              
-    command: -config.file=/etc/loki/config.yml
-    volumes:
-      - ./Observability/loki-config.yml:/etc/loki/config.yml
-      - ./loki-data:/loki
+      - "5601:5601"       
+    networks:
+      - ses_drs_network  
+
+  ses_apm-server:
+    image: docker.elastic.co/apm/apm-server:8.13.4
+    container_name: ses_apm_server
+    depends_on:
+      - elasticsearch
+      - ses_kibana
+    command: [
+      "apm-server", 
+      "-e", 
+      "-E", "output.elasticsearch.hosts=http://elasticsearch:9200", 
+      "-E", "output.elasticsearch.username=elastic", 
+      "-E", "output.elasticsearch.password=elastic", 
+      "-E", "kibana.host=http://ses_kibana:5601", 
+    ]
+    ports:
+      - "8200:8200"
+    networks:
+      - ses_drs_network  
 
 volumes:
   db-data:
-  prometheus-data:
-  grafana-data:
+  es-data:

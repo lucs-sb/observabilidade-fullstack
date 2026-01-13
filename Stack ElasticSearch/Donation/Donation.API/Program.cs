@@ -2,11 +2,43 @@ using Donation.API.Mappers;
 using Donation.API.Middleware;
 using Donation.CrossCutting.IoC;
 using Donation.Infrastructure.Repositories.Context;
+using Elastic.Apm.NetCoreAll;
+using Elastic.Ingest.Elasticsearch.DataStreams;
+using Elastic.Serilog.Sinks;
+using Elastic.Transport;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using Serilog;
 using System.Text.Json.Serialization;
 
+var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
+
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .Enrich.WithMachineName()
+    .Enrich.WithThreadId()
+    .Enrich.WithProperty("Application", "donation-api")
+    .WriteTo.Console()
+    .WriteTo.Elasticsearch(
+        new[] { new Uri("http://elasticsearch:9200") },
+        opts =>
+        {
+            opts.DataStream = new DataStreamName("logs", "donation-api", environment.ToLower().Replace(".", "-"));
+        },
+        transport =>
+        {
+            transport.Authentication(new BasicAuthentication("elastic", "elastic"));
+        })
+    .ReadFrom.Configuration(new ConfigurationBuilder()
+        .AddJsonFile("appsettings.json")
+        .AddJsonFile($"appsettings.{environment}.json", optional: true)
+        .AddEnvironmentVariables()
+        .Build())
+    .CreateLogger();
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog();
 
 // Add services to the container.
 builder.Services.AddControllers().AddJsonOptions(options =>
@@ -23,6 +55,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("Database"));
 });
+
+builder.Services.AddAllElasticApm();
 
 // Dependences Injections
 builder.Services.AddApplicationDI();

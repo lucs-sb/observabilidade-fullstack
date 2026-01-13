@@ -1,3 +1,7 @@
+using Elastic.Apm.NetCoreAll;
+using Elastic.Ingest.Elasticsearch.DataStreams;
+using Elastic.Serilog.Sinks;
+using Elastic.Transport;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Gateway.API.Extensions;
@@ -8,9 +12,37 @@ using Gateway.Domain.Interfaces.Http;
 using Gateway.Infrastructure.Integrations.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using System.Text.Json.Serialization;
 
+var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
+
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .Enrich.WithMachineName()
+    .Enrich.WithThreadId()
+    .Enrich.WithProperty("Application", "gateway-api")
+    .WriteTo.Console()
+    .WriteTo.Elasticsearch(
+        new[] { new Uri("http://elasticsearch:9200") },
+        opts =>
+        {
+            opts.DataStream = new DataStreamName("logs", "gateway-api", environment.ToLower().Replace(".", "-"));
+        },
+        transport =>
+        {
+            transport.Authentication(new BasicAuthentication("elastic", "elastic"));
+        })
+    .ReadFrom.Configuration(new ConfigurationBuilder()
+        .AddJsonFile("appsettings.json")
+        .AddJsonFile($"appsettings.{environment}.json", optional: true)
+        .AddEnvironmentVariables()
+        .Build())
+    .CreateLogger();
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog();
 
 // Add services to the container.
 builder.Services.AddControllers().AddJsonOptions(options =>
@@ -32,6 +64,8 @@ builder.Services
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddAllElasticApm();
 
 // Dependences Injections
 builder.Services.AddConfigurationDependencies(builder.Configuration);
