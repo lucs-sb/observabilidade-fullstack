@@ -46,7 +46,7 @@ builder.Services.AddOpenTelemetry()
             .AddHttpClientInstrumentation()
             .AddEntityFrameworkCoreInstrumentation() 
             .AddNpgsql() 
-            .AddOtlpExporter(opt => opt.Endpoint = new Uri("http://otel-collector:4317")); 
+            .AddOtlpExporter(opt => opt.Endpoint = new Uri(builder.Configuration["Urls:Otel"]!)); 
     });
 
 builder.Logging.ClearProviders();
@@ -57,7 +57,7 @@ builder.Logging.AddOpenTelemetry(options =>
     options.ParseStateValues = true;
     options.AddOtlpExporter(opt =>
     {
-        opt.Endpoint = new Uri("http://otel-collector:4317");
+        opt.Endpoint = new Uri(builder.Configuration["Urls:Otel"]!);
     });
 });
 
