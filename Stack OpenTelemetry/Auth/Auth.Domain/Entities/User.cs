@@ -14,8 +14,8 @@ public class User
     public Guid Id { get; set; }
 
     [Column("identifier")]
-    public string Identifier { get; set; }
+    public string? Identifier { get; set; }
 
     [Column("password")]
-    public string Password { get; set; }
+    public string? Password { get; set; }
 }
