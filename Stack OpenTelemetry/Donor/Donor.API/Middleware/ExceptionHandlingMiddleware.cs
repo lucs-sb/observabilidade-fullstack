@@ -30,10 +30,9 @@ public class ExceptionHandlingMiddleware
             };
 
             _logger.LogError(ex,
-               "Exception: {Ex} | Path: {Path} | TraceId: {TraceId} | StatusCode: {StatusCode}",
+               "Exception: {Ex} | Path: {Path} | StatusCode: {StatusCode}",
                ex.Message,
                context.Request.Path,
-               context.TraceIdentifier,
                context.Response.StatusCode);
 
             await context.Response.WriteAsJsonAsync(errorResponse);
