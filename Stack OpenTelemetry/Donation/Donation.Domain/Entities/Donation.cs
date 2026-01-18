@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Donation.Domain.Entities;
 
 [Table("tb_donation")]
-[Index(nameof(BagNumber), IsUnique = true)]
+//[Index(nameof(BagNumber), IsUnique = true)]
 public sealed class Donation
 {
     [Key]

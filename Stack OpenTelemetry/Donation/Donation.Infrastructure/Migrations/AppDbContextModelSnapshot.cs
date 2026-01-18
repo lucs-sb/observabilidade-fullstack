@@ -51,9 +51,6 @@ namespace Donation.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BagNumber")
-                        .IsUnique();
-
                     b.ToTable("tb_donation");
                 });
 #pragma warning restore 612, 618

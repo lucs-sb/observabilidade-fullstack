@@ -79,9 +79,6 @@ namespace Donor.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Email")
-                        .IsUnique();
-
                     b.ToTable("tb_donor");
                 });
 #pragma warning restore 612, 618

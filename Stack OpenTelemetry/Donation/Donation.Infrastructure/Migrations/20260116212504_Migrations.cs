@@ -26,12 +26,6 @@ namespace Donation.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_tb_donation", x => x.id);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_tb_donation_bag_number",
-                table: "tb_donation",
-                column: "bag_number",
-                unique: true);
         }
 
         /// <inheritdoc />
