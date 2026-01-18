@@ -23,12 +23,12 @@ public class DonationService : IDonationService
 
         try
         {
-            Domain.Entities.Donation? donation = await _unitOfWork.Repository<Domain.Entities.Donation>().GetByBagNumberAsync(donationDTO.BagNumber);
+            //Domain.Entities.Donation? donation = await _unitOfWork.Repository<Domain.Entities.Donation>().GetByBagNumberAsync(donationDTO.BagNumber);
 
-            if (donation != null)
-                throw new InvalidOperationException(BusinessMessage.Donation_DuplicateBagNumber_Warning);
+            //if (donation != null)
+            //    throw new InvalidOperationException(BusinessMessage.Donation_DuplicateBagNumber_Warning);
 
-            donation = donationDTO.Adapt<Domain.Entities.Donation>();
+            Domain.Entities.Donation? donation = donationDTO.Adapt<Domain.Entities.Donation>();
 
             await _unitOfWork.Repository<Domain.Entities.Donation>().AddAsync(donation);
 

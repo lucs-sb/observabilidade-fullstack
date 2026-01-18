@@ -33,12 +33,6 @@ namespace Donor.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_tb_donor", x => x.id);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_tb_donor_email",
-                table: "tb_donor",
-                column: "email",
-                unique: true);
         }
 
         /// <inheritdoc />
