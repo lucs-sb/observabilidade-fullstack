@@ -23,12 +23,12 @@ public class DonorService : IDonorService
 
         try
         {
-            Domain.Entities.Donor? donor = await _unitOfWork.Repository<Domain.Entities.Donor>().GetByEmailAsync(donorDTO.Email);
+            //Domain.Entities.Donor? donor = await _unitOfWork.Repository<Domain.Entities.Donor>().GetByEmailAsync(donorDTO.Email);
 
-            if (donor != null)
-                throw new InvalidOperationException(BusinessMessage.Donor_DuplicateEmail_Warning);
+            //if (donor != null)
+            //    throw new InvalidOperationException(BusinessMessage.Donor_DuplicateEmail_Warning);
 
-            donor = donorDTO.Adapt<Domain.Entities.Donor>();
+            Domain.Entities.Donor? donor = donorDTO.Adapt<Domain.Entities.Donor>();
 
             await _unitOfWork.Repository<Domain.Entities.Donor>().AddAsync(donor);
 
